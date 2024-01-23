@@ -1,13 +1,16 @@
 const express = require("express");
 const cors = require('cors');
+require('dotenv').config(); 
 const morgan = require("morgan");
 const actions = require("./actions");
 const mongoose = require('mongoose');
 
+
 const app = express();
+app.use(cors());
 const PORT = 4445;
 
-mongoose.connect("mongodb+srv://imanariyobaptiste:TAREsumba61.com@cluster0.dfwxen1.mongodb.net/todobackendusingrpc", {
+mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
