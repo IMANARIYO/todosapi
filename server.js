@@ -7,7 +7,10 @@ const mongoose = require('mongoose');
 
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: 'https://rpcimplementation.onrender.com',
+    credentials: true,
+}));
 const PORT = 4445;
 
 mongoose.connect(process.env.MONGODB_URI, {
