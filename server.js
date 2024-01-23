@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 const app = express();
 const PORT = 4445;
 
-mongoose.connect("mongodb://127.0.0.1:27017/todobackendusingrpc", {
+mongoose.connect("mongodb+srv://imanariyobaptiste:TAREsumba61.com@cluster0.dfwxen1.mongodb.net/todobackendusingrpc", {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
