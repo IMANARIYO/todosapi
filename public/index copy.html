@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todos App</title>
+    <script src="./client.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #todos-list {
+            list-style-type: none;
+            padding: 0;
+            width: 300px;
+        }
+
+        li {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            margin: 5px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        form {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        input {
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 8px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Todos</h1>
+    <ul id="todos-list"></ul>
+    <form id="todo-form">
+        <input type="text" name="message" placeholder="Enter a new todo">
+        <button type="submit">Add Todo</button>
+    </form>
+    <script>
+        // Your JavaScript code here
+        async function renderTodos() {
+            const todos = await rpcClient({ type: "getTodos", payload: {} });
+            const ul = document.getElementById("todos-list");
+            ul.innerHTML = "";
+
+            for (let todo of todos) {
+                const li = document.createElement("li");
+                li.innerText = todo.message;
+
+                // Add update button
+                const updateButton = document.createElement("button");
+                updateButton.innerText = "Update";
+                updateButton.addEventListener("click", async () => {
+                    const newMessage = prompt(`Enter new message for Todo ${todo.id}:`);
+                    if (newMessage !== null) {
+                        await rpcClient({ type: "updateTodoById", payload: { id: todo.id, message: newMessage } });
+                        renderTodos();
+                    }
+                });
+                li.appendChild(updateButton);
+
+                // Add delete button
+                const deleteButton = document.createElement("button");
+                deleteButton.innerText = "Delete";
+                deleteButton.addEventListener("click", async () => {
+                    const confirmDelete = confirm(`Are you sure you want to delete Todo ${todo.id}?`);
+                    if (confirmDelete) {
+                        await rpcClient({ type: "deleteTodoById", payload: { id: todo.id } });
+                        renderTodos();
+                    }
+                });
+                li.appendChild(deleteButton);
+
+                ul.appendChild(li);
+            }
+        }
+
+        renderTodos();
+
+        document.getElementById("todo-form").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const input = document.querySelector("[name='message']");
+            const message = input.value.trim(); // Trim leading and trailing whitespaces
+
+            // Check if the message is not empty before sending the request
+            if (message !== "") {
+                await rpcClient({ type: "createTodo", payload: { message } });
+                renderTodos();
+                input.value = ''; // Clear the input field after adding a todo
+            } else {
+                alert("Please enter a non-empty todo message.");
+            }
+        });
+    </script>
+</body>
+</html>
