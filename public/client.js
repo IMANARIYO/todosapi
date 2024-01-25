@@ -4,7 +4,7 @@ async function rpcClient(details){
         headers: {
             "content-type":"application/json"
         },
-        // credentials: 'include',  
+         credentials: 'include',  
         body: JSON.stringify(details)
     })
     const result = await response.json()

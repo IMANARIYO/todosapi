@@ -21,22 +21,28 @@
 
         h1 {
             color: #333;
+            margin-bottom: 20px;
         }
 
-        #todos-list {
-            list-style-type: none;
-            padding: 0;
-            width: 300px;
+        table {
+            width: 50%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
 
-        li {
-            background-color: #fff;
+        th, td {
             border: 1px solid #ddd;
-            margin: 5px;
-            padding: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #701eec;
+            color: #fff;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
         }
 
         form {
@@ -69,23 +75,36 @@
 </head>
 <body>
     <h1>Todos</h1>
-    <ul id="todos-list"></ul>
+    <table id="todos-table">
+        <thead>
+            <tr>
+                <th>Todos</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="todos-list"></tbody>
+    </table>
     <form id="todo-form">
         <input type="text" name="message" placeholder="Enter a new todo">
         <button type="submit">Add Todo</button>
     </form>
     <script>
-        // Your JavaScript code here
         async function renderTodos() {
             const todos = await rpcClient({ type: "getTodos", payload: {} });
-            const ul = document.getElementById("todos-list");
-            ul.innerHTML = "";
-
+            const tbody = document.getElementById("todos-list");
+            tbody.innerHTML = "";
             for (let todo of todos) {
-                const li = document.createElement("li");
-                li.innerText = todo.message;
+                const row = document.createElement("tr");
 
-                // Add update button
+                // Column for Todos
+                const todosColumn = document.createElement("td");
+                todosColumn.innerText = todo.message;
+                row.appendChild(todosColumn);
+
+                // Column for Actions
+                const actionsColumn = document.createElement("td");
+
+                // Update Button
                 const updateButton = document.createElement("button");
                 updateButton.innerText = "Update";
                 updateButton.addEventListener("click", async () => {
@@ -95,9 +114,9 @@
                         renderTodos();
                     }
                 });
-                li.appendChild(updateButton);
+                actionsColumn.appendChild(updateButton);
 
-                // Add delete button
+                // Delete Button
                 const deleteButton = document.createElement("button");
                 deleteButton.innerText = "Delete";
                 deleteButton.addEventListener("click", async () => {
@@ -107,14 +126,14 @@
                         renderTodos();
                     }
                 });
-                li.appendChild(deleteButton);
+                actionsColumn.appendChild(deleteButton);
 
-                ul.appendChild(li);
+                row.appendChild(actionsColumn);
+
+                tbody.appendChild(row);
             }
         }
-
         renderTodos();
-
         document.getElementById("todo-form").addEventListener("submit", async (event) => {
             event.preventDefault();
             const input = document.querySelector("[name='message']");

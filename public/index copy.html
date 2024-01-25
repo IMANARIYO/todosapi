@@ -75,17 +75,14 @@
         <button type="submit">Add Todo</button>
     </form>
     <script>
-        // Your JavaScript code here
         async function renderTodos() {
             const todos = await rpcClient({ type: "getTodos", payload: {} });
             const ul = document.getElementById("todos-list");
             ul.innerHTML = "";
-
             for (let todo of todos) {
                 const li = document.createElement("li");
                 li.innerText = todo.message;
-
-                // Add update button
+                // Adding the  update button to the listitemsm 
                 const updateButton = document.createElement("button");
                 updateButton.innerText = "Update";
                 updateButton.addEventListener("click", async () => {
@@ -96,8 +93,7 @@
                     }
                 });
                 li.appendChild(updateButton);
-
-                // Add delete button
+                // Adding delete buttonto the childd
                 const deleteButton = document.createElement("button");
                 deleteButton.innerText = "Delete";
                 deleteButton.addEventListener("click", async () => {
@@ -112,9 +108,7 @@
                 ul.appendChild(li);
             }
         }
-
         renderTodos();
-
         document.getElementById("todo-form").addEventListener("submit", async (event) => {
             event.preventDefault();
             const input = document.querySelector("[name='message']");
